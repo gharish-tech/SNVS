@@ -2,7 +2,7 @@
 
 A Python-based network scanner that discovers hosts, scans ports, identifies services, and detects vulnerabilities.
 
-## Features
+# Features
 
 - Host Discovery
 - Port Scanning
@@ -10,6 +10,6 @@ A Python-based network scanner that discovers hosts, scans ports, identifies ser
 - Vulnerability Detection
 - Report Generation
 
-## Author
+# Author
 
 Harish
