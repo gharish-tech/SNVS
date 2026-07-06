@@ -1,4 +1,5 @@
 import sys
+from scanner.port_scanner import scan_port
 from utils.ip_validator import validate_ip
 from scanner.host_discovery import is_host_alive
 
@@ -21,3 +22,12 @@ if is_host_alive(target):
 else:
     print("[-] Host is Down or Blocking Ping")
     
+print("\n[*] Scanning Common Ports...\n")
+
+ports = [21, 22, 23, 25, 53, 80, 110, 143, 443]
+
+for port in ports:
+    if scan_port(target, port):
+        print(f"[+] Port {port} is OPEN")
+    else:
+        print(f"[-] Port {port} is CLOSED")
