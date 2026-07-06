@@ -1,4 +1,6 @@
 import sys
+from utils.version_parser import parse_banner
+from vulnerability.cve_checker import check_vulnerability
 from scanner.banner_grabber import grab_banner
 from utils.services import get_service_name
 from scanner.port_scanner import scan_port
@@ -39,8 +41,24 @@ for port in ports:
         print(f"[+] {port:<6} OPEN     {service}")
         print(f"    Banner: {banner}\n")
 
+        service_name, version = parse_banner(banner)
+
+        if service_name and version:
+
+            result = check_vulnerability(service_name, version)
+
+            if result:
+
+                print("[!] Vulnerability Found")
+                print(f"CVE         : {result['cve']}")
+                print(f"Severity    : {result['severity']}")
+                print(f"CVSS        : {result['cvss']}")
+                print(f"Description : {result['description']}")
+                print(f"Fix         : {result['fix']}")
+                print()
+
     else:
 
         print(f"[-] {port:<6} CLOSED")
         
-       
+        
