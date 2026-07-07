@@ -1,20 +1,62 @@
 [
-  {
-    "service": "Apache",
-    "version": "2.4.49",
-    "cve": "CVE-2021-41773",
-    "cvss": 9.8,
-    "severity": "Critical",
-    "description": "Path Traversal Vulnerability",
-    "fixed_version": "2.4.51"
-  },
-  {
-    "service": "OpenSSH",
-    "version": "8.2",
-    "cve": "CVE-2021-41617",
-    "cvss": 7.0,
-    "severity": "High",
-    "description": "Privilege Escalation",
-    "fixed_version": "8.8"
-  }
+    {
+        "product": "vsftpd",
+        "versionStart": "2.3.4",
+        "versionEnd": "2.3.4",
+        "id": "CVE-2011-2523",
+        "severity": "Critical",
+        "cvss": 10.0,
+        "description": "Backdoor command execution vulnerability in vsFTPd 2.3.4.",
+        "fix": "Upgrade to latest version."
+    },
+    {
+        "product": "openssh",
+        "versionStart": "4.0",
+        "versionEnd": "4.7",
+        "id": "CVE-2008-4109",
+        "severity": "Medium",
+        "cvss": 5.8,
+        "description": "Multiple vulnerabilities affecting OpenSSH.",
+        "fix": "Upgrade OpenSSH."
+    },
+    {
+        "product": "apache",
+        "versionStart": "2.0",
+        "versionEnd": "2.2.8",
+        "id": "CVE-2007-6420",
+        "severity": "High",
+        "cvss": 7.5,
+        "description": "Multiple vulnerabilities in Apache HTTP Server.",
+        "fix": "Upgrade Apache."
+    },
+    {
+        "product": "mysql",
+        "versionStart": "4.0",
+        "versionEnd": "5.1",
+        "id": "CVE-2012-2122",
+        "severity": "Critical",
+        "cvss": 9.8,
+        "description": "Authentication bypass vulnerability in MySQL.",
+        "fix": "Upgrade MySQL."
+    },
+    {
+        "product": "proftpd",
+        "versionStart": "1.3.2",
+        "versionEnd": "1.3.3",
+        "id": "CVE-2010-3867",
+        "severity": "High",
+        "cvss": 8.5,
+        "description": "Remote code execution vulnerability in ProFTPD.",
+        "fix": "Upgrade ProFTPD."
+    },
+    {
+        "product": "samba",
+        "versionStart": "3.0",
+        "versionEnd": "3.6",
+        "id": "CVE-2012-1182",
+        "severity": "High",
+        "cvss": 8.1,
+        "description": "Remote code execution vulnerability in Samba.",
+        "fix": "Upgrade Samba."
+    }
 ]

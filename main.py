@@ -1,14 +1,45 @@
 import sys
-from utils.version_parser import parse_banner
-from vulnerability.cve_checker import check_vulnerability
+
 from scanner.banner_grabber import grab_banner
-from utils.services import get_service_name
-from scanner.port_scanner import scan_port
-from utils.ip_validator import validate_ip
 from scanner.host_discovery import is_host_alive
+from scanner.port_scanner import scan_port
+
+from utils.ip_validator import validate_ip
+from utils.services import get_service_name
+from utils.version_parser import parse_banner
+
+from vulnerability.cve_checker import check_vulnerability
+
+
+# ==========================================================
+# Banner
+# ==========================================================
+
+print("=" * 70)
+print("        SNVS v1.0 - Service & Version Vulnerability Scanner")
+print("=" * 70)
+print("Author      : Harish")
+print("Language    : Python")
+print("Version     : 1.0")
+print("=" * 70)
+print()
+
+
+# ==========================================================
+# Counters
+# ==========================================================
+
+open_ports = 0
+services_found = 0
+vulnerabilities_found = 0
+
+
+# ==========================================================
+# Input Validation
+# ==========================================================
 
 if len(sys.argv) < 2:
-    print("Usage: python main.py <IP>")
+    print("Usage: py main.py <IP Address>")
     sys.exit()
 
 target = sys.argv[1]
@@ -17,48 +48,114 @@ if not validate_ip(target):
     print("[-] Invalid IP Address")
     sys.exit()
 
-print("[+] Valid Target:", target)
 
-print("[*] Checking if host is alive...")
+# ==========================================================
+# Host Discovery
+# ==========================================================
+
+print(f"Target IP   : {target}")
+print()
+
+print("[*] Checking Host Status...")
 
 if is_host_alive(target):
-    print("[+] Host is Alive")
+    print("[+] Host Status : Alive")
 else:
-    print("[-] Host is Down or Blocking Ping")
-    
-ports = [21,22,23,25,53,80,110,143,443,3306,3389,8080]
+    print("[-] Host Status : Down")
+    sys.exit()
 
-print("\n[*] Scanning Common Ports...\n")
+print()
+
+
+# ==========================================================
+# Port Scan
+# ==========================================================
+
+ports = [
+    21,
+    22,
+    23,
+    25,
+    53,
+    80,
+    110,
+    143,
+    443,
+    3306,
+    3389,
+    8080,
+]
+
+print("[*] Scanning Common Ports...\n")
 
 for port in ports:
 
     if scan_port(target, port):
 
+        open_ports += 1
+
         service = get_service_name(port)
 
         banner = grab_banner(target, port)
 
-        print(f"[+] {port:<6} OPEN     {service}")
-        print(f"    Banner: {banner}\n")
-
         service_name, version = parse_banner(banner)
 
         if service_name and version:
+            services_found += 1
 
-            result = check_vulnerability(service_name, version)
+        print("=" * 70)
+        print(f"PORT        : {port}")
+        print(f"STATE       : OPEN")
+        print(f"SERVICE     : {service}")
+        print(f"BANNER      : {banner}")
+        print(f"DETECTED    : {service_name}")
+        print(f"VERSION     : {version}")
 
-            if result:
+        if service_name and version:
 
-                print("[!] Vulnerability Found")
-                print(f"CVE         : {result['cve']}")
-                print(f"Severity    : {result['severity']}")
-                print(f"CVSS        : {result['cvss']}")
-                print(f"Description : {result['description']}")
-                print(f"Fix         : {result['fix']}")
-                print()
+            results = check_vulnerability(service_name, version)
+
+            if results:
+
+                vulnerabilities_found += len(results)
+
+                print("\nVULNERABILITIES FOUND")
+                print("-" * 70)
+
+                for cve in results:
+
+                    print(f"CVE ID         : {cve['id']}")
+                    print(f"Severity       : {cve['severity']}")
+                    print(f"CVSS Score     : {cve['cvss']}")
+                    print(f"Description    : {cve['description']}")
+                    print(f"Recommendation : {cve['fix']}")
+                    print("-" * 70)
+
+            else:
+                print("\nNo Known Vulnerabilities Found")
+
+        else:
+            print("\nService Version Not Identified")
 
     else:
 
-        print(f"[-] {port:<6} CLOSED")
-        
-        
+        print(f"[-] Port {port:<5} CLOSED")
+
+
+# ==========================================================
+# Scan Summary
+# ==========================================================
+
+print("\n")
+print("=" * 70)
+print("                        SCAN SUMMARY")
+print("=" * 70)
+
+print(f"Target IP               : {target}")
+print(f"Open Ports              : {open_ports}")
+print(f"Services Detected       : {services_found}")
+print(f"Vulnerabilities Found   : {vulnerabilities_found}")
+
+print("=" * 70)
+print("Scan Completed Successfully!")
+print("=" * 70)

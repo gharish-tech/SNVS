@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>SNVS Scanner</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>SNVS v1.0</h1>
+
+<h3>Service & Version Vulnerability Scanner</h3>
+
+<form method="POST">
+
+<input
+type="text"
+name="ip"
+placeholder="Enter Target IP Address"
+required>
+
+<button type="submit">
+
+Scan Target
+
+</button>
+
+</form>
+
+{% if error %}
+
+<p class="error">
+
+{{ error }}
+
+</p>
+
+{% endif %}
+
+{% if target %}
+
+<h2>Results for {{ target }}</h2>
+
+<div class="summary">
+
+<div class="card-small">
+<h2>{{ results|length }}</h2>
+<p>Open Ports</p>
+</div>
+
+<div class="card-small">
+<h2>
+{{ results|selectattr("detected")|list|length }}
+</h2>
+<p>Services</p>
+</div>
+
+<div class="card-small">
+<h2>
+{% set total=namespace(value=0) %}
+{% for r in results %}
+{% set total.value = total.value + (r.vulnerabilities|length) %}
+{% endfor %}
+{{ total.value }}
+</h2>
+<p>Vulnerabilities</p>
+</div>
+
+<div class="card-small">
+<h2 style="color:red;">HIGH</h2>
+<p>Overall Risk</p>
+</div>
+
+</div>
+
+{% endif %}
+
+{% if report %}
+
+<a href="/Reports/{{ report }}">
+
+<button>
+
+⬇ Download Report
+
+</button>
+
+</a>
+
+{% endif %}
+
+
+{% for item in results %}
+
+<div class="card">
+
+<h3>Port {{ item.port }}</h3>
+
+<p><b>Service:</b> {{ item.service }}</p>
+
+<p><b>Banner:</b> {{ item.banner }}</p>
+
+<p><b>Detected:</b> {{ item.detected }}</p>
+
+<p><b>Version:</b> {{ item.version }}</p>
+
+{% if item.vulnerabilities %}
+
+<h4>Vulnerabilities</h4>
+
+{% for cve in item.vulnerabilities %}
+
+<div class="vuln">
+
+<p>
+
+<b>
+
+<a
+href="https://nvd.nist.gov/vuln/detail/{{ cve.id }}"
+target="_blank">
+
+{{ cve.id }}
+
+</a>
+
+</b>
+
+</p>
+
+<p><b>Severity:</b> {{ cve.severity }}</p>
+
+<p><b>CVSS:</b> {{ cve.cvss }}</p>
+
+<p>{{ cve.description }}</p>
+
+<p><b>Recommendation:</b> {{ cve.fix }}</p>
+
+</div>
+
+{% endfor %}
+
+{% else %}
+
+<p style="color:green;"><b>✓ No Known Vulnerabilities</b></p>
+
+{% endif %}
+
+</div>
+
+{% endfor %}
+
+</div>
+<div class="footer">
+
+SNVS v2.0 • Service & Version Vulnerability Scanner
+
+<br><br>
+
+Developed by Harish
+
+</div>
+</body>
+
+</html>
+
+
